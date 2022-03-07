@@ -12,6 +12,7 @@ let answer_to = function
 
 [<EntryPoint>]
 let main argv =
+    printfn "Какoй твoй любимый язык?"
     let lang = Console.ReadLine().ToLower()
     Console.WriteLine(answer_to lang)
     0
