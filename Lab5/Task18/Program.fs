@@ -14,6 +14,14 @@ let is_prime x =
 
     is_prime_r x (x - 1)
 
+let rec nod a b =
+    if a = 0 || b = 0 then
+        a + b
+    else
+        let new_a = if a > b then a % b else a
+        let new_b = if a <= b then b % a else b
+        nod new_a new_b
+
 
 let sum_not_prime_dividers x =
     let rec sum_not_prime_dividers_r x current_sum current_divider =
@@ -33,6 +41,26 @@ let sub_3_dig_count x =
             sub_3_dig_cnt_r new_x new_cnt
     sub_3_dig_cnt_r x 0
 
+// Кол-во чисел, (НЕ явл. делителями _числа) И (НЕ взаимно прост. с _числом) И (взаимно прост. с SUM простых цифр этого _числа)
+let method3 x =
+    let rec sum_prime x current_sum =
+        if x = 0 then current_sum
+        else
+            let new_sum = if is_prime (x % 10) then current_sum + (x % 10) else current_sum
+            let new_x = x / 10
+            sum_prime new_x new_sum
+    
+    let sum_pr = sum_prime x 0
+    
+    let rec num_cnt x current_num current_cnt =
+        if current_num <= 0 then current_cnt
+        else
+            let new_cnt = if (x % current_num <> 0) && (nod current_num x <> 1) && (nod current_num sum_pr = 1) then current_cnt + 1 else current_cnt
+            let new_num = current_num - 1
+            num_cnt x new_num new_cnt
+
+    num_cnt x (x-1) 0
+
 [<EntryPoint>]
 let main argv =
     Console.WriteLine("Введите число")
@@ -40,5 +68,6 @@ let main argv =
 
     printfn "Сумма непростых делителей: %d" (sum_not_prime_dividers x)
     printfn "Кол-во цифр, меньше 3: %d" (sub_3_dig_count x)
+    printfn "Метод 3: %d" (method3 x)
 
     0
