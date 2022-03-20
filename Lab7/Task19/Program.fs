@@ -17,7 +17,17 @@ let arrange str =
     let chars_only = String.filter (fun ch -> Char.IsLetter ch) str
     String.concat "" [nums_only; chars_only]
 
+let choose = function
+    | 1 -> shuffle_inside
+    | _ -> arrange
+
 [<EntryPoint>]
 let main argv =
-    
+    printfn "Введите строку: "
+    let str = Console.ReadLine()
+    printfn "Какую задачу решить?"
+    printfn "1. Перемешать символы в слове, кроме первого и последнего"
+    printfn "2. Расположить все цифры в начале строки, все буквы - в конце"
+
+    Console.ReadLine() |> Int32.Parse |> choose <| str |> printfn "Результат: %s" 
     0
