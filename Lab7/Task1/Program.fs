@@ -13,16 +13,20 @@ let rec writeList = function
         printfn "%O" head
         writeList tail
 
+let shiftLeft list n =
+    let len = List.length list
+    let shift_index idx = if idx < len - n then idx + n else if idx-(len-n) < len then idx-(len-n) else 0
+    List.init (List.length list) (fun idx -> List.item (shift_index idx) list)
+
 [<EntryPoint>]
 let main argv =
     printfn "Кол-во элементов:"
     let cnt = Console.ReadLine() |> Convert.ToInt32
     printfn "Список:"
     let list = readList cnt
-    let len = List.length list
-    let shift_index idx = if idx < len - 3 then idx + 3 else if idx-(len-3) < len then idx-(len-3) else 0
     
+    let shifted = shiftLeft list 3
+
     printfn "Сдвинутый список"
-    let shifted = List.init (List.length list) (fun idx -> List.item (shift_index idx) list)
     writeList shifted
     0
