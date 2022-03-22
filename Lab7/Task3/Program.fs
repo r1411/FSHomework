@@ -13,6 +13,14 @@ let rec writeList = function
         printfn "%O" head
         writeList tail
 
+let between_min_cnt list =
+    let min_elem = List.min list
+    
+    let min1_index = List.findIndex (fun (idx, x) -> x = min_elem) (List.indexed list)
+    let min2_index = List.findIndexBack (fun (idx, x) -> x = min_elem) (List.indexed list)
+
+    min2_index - min1_index - 1
+
 [<EntryPoint>]
 let main argv =
     printfn "Кол-во элементов:"
@@ -20,14 +28,11 @@ let main argv =
     printfn "Список:"
     let list = readList cnt
     
-    let min_elem = List.min list
+    let cnt = between_min_cnt list
     
-    let min1_index = List.findIndex (fun (idx, x) -> x = min_elem) (List.indexed list)
-    let min2_index = List.findIndexBack (fun (idx, x) -> x = min_elem) (List.indexed list)
-    
-    if min1_index = min2_index then
+    if cnt = -1 then
         printfn "В списке нет второго минимального числа"
     else
-        printfn "Элементов между первым и вторым максимальными: %d" (min2_index - min1_index - 1)
+        printfn "Элементов между первым и вторым максимальными: %d" cnt
 
     0
