@@ -13,17 +13,18 @@ let rec writeList = function
         printfn "%O" head
         writeList tail
 
+let max_odd (list: int list) =
+    let sorted = List.sortDescending list
+    List.tryFind (fun x -> x % 2 = 1) sorted
+
 [<EntryPoint>]
 let main argv =
     printfn "Кол-во элементов:"
     let cnt = Console.ReadLine() |> Convert.ToInt32
     printfn "Список:"
     let list = readList cnt
-    
-    let sorted = List.sort list
-    let rev_sorted = List.rev sorted
 
-    let max_odd = List.tryFind (fun x -> x % 2 = 1) rev_sorted
+    let max_odd = max_odd list
 
     if Option.isNone max_odd then
         printfn "В списке нет нечетных элементов"
