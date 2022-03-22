@@ -80,7 +80,36 @@ let sort_freq strings_list =
     let alphabetFreq = alphabetFreqMap strings_list
     List.sortBy (fun str -> Math.Abs((alphabetFreqMap [str]).[mostFreqSymbol str] - alphabetFreq.[mostFreqSymbol str])) strings_list
 
+let read_list n =
+    let rec read_list_r n list =
+        match n with
+        | 0 -> list
+        | _ ->
+            let new_list = list @ [Console.ReadLine()]
+            let new_n = n - 1
+            read_list_r new_n new_list
+    
+    read_list_r n []
+
+let choose_sort = function
+    | 2 -> sort_freq
+    | _ -> sort_by_median
+
 [<EntryPoint>]
 let main argv =
+    printfn "Кол-во строк:"
+    let n = Console.ReadLine() |> Convert.ToInt32;
+    printfn "Строки:"
+    let list = read_list n
+
+    printfn "Как сортируем?"
+    printfn "1. В порядке увеличения медианного значения выборки строк"
+    printfn "2. В порядке увеличения разницы между частотой наиболее часто встречаемого символа в строке и частотой его появления в алфавите"
     
+    let method = Console.ReadLine() |> Convert.ToInt32;
+    let sorted_list = list |> choose_sort method
+
+    printfn "Отсортированный список:"
+    write_list sorted_list
+
     0
