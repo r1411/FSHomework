@@ -60,11 +60,53 @@ let inputLicense() =
 
     DriversLicense(fname, lname, series, number, issDate, expDate)
 
+[<AbstractClass>]
+type DocCollection() =
+    abstract member searchDoc: DriversLicense -> bool
+
+type ArrayDocCollection(list: DriversLicense list)=
+    inherit DocCollection()
+    member this.DocArray = Array.ofList list
+
+    override this.searchDoc(lic) = 
+        Array.exists (fun x-> x.Equals lic) this.DocArray
+
+type ListDocCollection(list: DriversLicense list)=
+    inherit DocCollection()
+    member this.DocList = list
+
+    override this.searchDoc(lic) = 
+        List.exists (fun x-> x.Equals(lic)) this.DocList
+
+type BinListDocCollection(list: DriversLicense list)=
+    inherit DocCollection()
+
+    let rec binSearch (l:'DriversLicense list) (license:'DriversLicense) =
+        match List.length l with
+        | 0 -> false
+        | i ->
+            let middle = i/2
+            match sign <| compare license l.[middle] with
+            | 0 -> true
+            | 1->binSearch l.[..middle - 1] license
+            | _->binSearch l.[middle + 1..] license  
+
+    member this.BinList = List.sortBy (fun (x:DriversLicense) -> (x.series, x.number)) list 
+
+    override this.searchDoc(lic) =
+        binSearch this.BinList lic
+
+type SetDocCollection(list: DriversLicense list)=
+    inherit DocCollection()
+    member this.DocSet = Set.ofList list
+
+    override this.searchDoc(lic) = 
+        Set.contains lic this.DocSet
 
 [<EntryPoint>]
 let main argv =
     let lic1 = DriversLicense("Артур", "Манукьян", 7777, 123000, DateTime.Parse "01.01.2020", DateTime.Parse "01.04.2022")
     Console.WriteLine(lic1)
     let lic2 = inputLicense()
-    
+
     0
