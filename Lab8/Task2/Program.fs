@@ -48,9 +48,11 @@ let main argv =
     printfn "1. %O should be equal to %O" (id px5) (applyMaybe (Just id) px5)
 
     // Закон 2. Если y=f(x), то подъем функции f и значения х и применение к ним функции apply приведет к такому же результату, что и подъем y.
-    let test1 = applyMaybe (Just f1) (Just 1)
-    //let test2 = applyMaybe func_f app_x - нельзя проверить средставами F#
-    printfn "2. %O" test1
+    let x = 5
+    let y = id x 
+    let test1 = applyMaybe (Just id) (Just x)
+    let test2 = Just y
+    printfn "2. %O should be equal to %O" test1 test2
 
     // Закон 3. Аргументы apply можно менять местами
     //let t1 = applyMaybe (Just f1) (Just 1)
