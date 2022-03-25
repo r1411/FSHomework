@@ -10,7 +10,11 @@ type DriversLicense(first_name: string, last_name: string, series: int, number: 
 
     member this.isValid() = DateTime.Now < expDate
 
+    override this.ToString() = $"Права{{Имя: {this.first_name}, Фамилия: {this.last_name}, Серия: {this.series}, Номер: {this.number}, Дата выдачи: {this.issDate.ToShortDateString()}, Дата истечения: {this.expDate.ToShortDateString()}}}"
+
 [<EntryPoint>]
 let main argv =
-    
+    let lic1 = DriversLicense("Артур", "Манукьян", 7777, 123000, DateTime.Parse "01.01.2020", DateTime.Parse "01.04.2022")
+    Console.WriteLine(lic1)
+
     0
