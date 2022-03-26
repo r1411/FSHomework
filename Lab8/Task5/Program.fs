@@ -1,5 +1,6 @@
 ﻿open System
 open System.Text.RegularExpressions
+open System.Diagnostics
 
 type DriversLicense(first_name: string, last_name: string, series: int, number: int, issDate: DateTime, expDate: DateTime) =
     member this.first_name = first_name
@@ -103,10 +104,57 @@ type SetDocCollection(list: DriversLicense list)=
     override this.searchDoc(lic) = 
         Set.contains lic this.DocSet
 
+let charsForRandom = "абвгдежзиклмнопрстуфхчшщьыъэюя"
+
+let randomStr len (random:Random) = 
+    let randomChars = [|for i in 0..len -> charsForRandom.[random.Next(charsForRandom.Length)]|]
+    
+    new System.String(randomChars)
+
+let generateRandomLicense (random: Random)=
+    let fname = randomStr 7 random
+    let lname = randomStr 11 random
+    let series = random.Next (1000, 9999)
+    let number = random.Next (100000, 999999)
+    let issue = DateTime.UtcNow.AddDays(-random.Next 1000)
+    let expire = DateTime.UtcNow.AddDays(random.Next 1000)
+    
+    DriversLicense(fname, lname, series, number, issue, expire)
+
+let generateRandomLicenseList len random = 
+    [for i in 0..len -> generateRandomLicense random]
+
+let measureSearchTime (watch:Stopwatch) searchMethod lic =
+    watch.Reset()
+    watch.Start()
+    let isFound = searchMethod lic
+    watch.Stop()
+
+    watch.ElapsedMilliseconds
+    
 [<EntryPoint>]
 let main argv =
     let lic1 = DriversLicense("Артур", "Манукьян", 7777, 123000, DateTime.Parse "01.01.2020", DateTime.Parse "01.04.2022")
-    Console.WriteLine(lic1)
-    let lic2 = inputLicense()
+    //Console.WriteLine(lic1)
+    //let lic2 = inputLicense()
+
+    let random = Random()
+    let licenses =  generateRandomLicenseList 19999 random @ [lic1] @ generateRandomLicenseList 20000 random
+
+    let licArray = ArrayDocCollection(licenses)
+    let licList = ListDocCollection(licenses)
+    let licBinList = BinListDocCollection(licenses)
+    let licSet = SetDocCollection(licenses)
+
+    let watch = new Stopwatch()
+
+    printfn "Array search time: %d ms" (measureSearchTime watch licArray.searchDoc lic1)
+    printfn "List search time: %d ms" (measureSearchTime watch licList.searchDoc lic1)
+    printfn "BinList search: %d ms" (measureSearchTime watch licBinList.searchDoc lic1)
+    printfn "Set search: %d ms" (measureSearchTime watch licSet.searchDoc lic1)
+
+    watch.Reset()
+
+    
 
     0
